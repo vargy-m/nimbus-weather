@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Weather app"/>
+    <title>Nimbus</title>
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="icon" type="image/png" href=" https://cdn-icons-png.flaticon.com/512/678/678310.png"/>
+    
+</head>
+
+<body>
+    <header>
+        <h1>Nimbus <em>Weather</em></h1>
+        <form id="city-search-form" class="city-search-form">
+            <input id="search-bar" type="search" class="search-bar" placeholder="Search city..."/>
+            <button class="search-button">Search</button>
+            <p id="error-message"></p>
+        </form>
+    </header>
+
+    <main class="main-container">
+    
+        <section id="current-weather" class="homepage-section">
+            <p id="current-location">&#8599; Current Location</p> 
+            <p id="city-name"></p>
+            <p id="temp-number"></p>
+            <p id="weather-description"></p>
+            <p id="feels-like">
+                <span class="label">Feels like: </span>
+                <span id="feels-like-value"></span>
+            </p>
+            <div id="high-low">
+                <p><span class="label">H: </span><span id="high"></span></p>
+                <p><span class="label">L: </span><span id="low"></span></p>
+            </div>
+        </section>
+
+        <section id="hourly-weather">
+
+        </section>
+
+        <section id="weekly-forecast">
+            
+        </section>
+
+    </main>
+
+<script src="script.js"></script>
+</body>    
+</html>
