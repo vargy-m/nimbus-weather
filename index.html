@@ -7,22 +7,56 @@
     <title>Nimbus</title>
     <link rel="stylesheet" href="styles.css"/>
     <link rel="icon" type="image/png" href=" https://cdn-icons-png.flaticon.com/512/678/678310.png"/>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 
 <body>
-    <header>
-        <h1>Nimbus <em>Weather</em></h1>
-        <form id="city-search-form" class="city-search-form">
-            <input id="search-bar" type="search" class="search-bar" placeholder="Search city..."/>
-            <button class="search-button">Search</button>
-            <p id="error-message"></p>
-        </form>
-    </header>
+    <video autoplay muted loop playsinline id="background-video">
+        <source src="videos/background1.mp4" type="video/mp4">
+    </video>
+
+<header><h1>Nimbus <em>Weather</em></h1></header>
+
 
     <main class="main-container">
-    
-        <section id="current-weather" class="homepage-section">
+        <section id="landing-page">
+            <div id="landing-page-text">
+            <h1>Know before you go.</h1>
+            <p>"Move fast and bring an umbrella."</p>
+            </div>
+             <form id="city-search-form-landing" class="city-search-form-landing">
+                <div class="search-container-landing">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input id="search-bar-landing" type="search" class="search-bar-landing" placeholder="Search city..." autocomplete="off"/>
+                    <button id="location-btn-landing"><i class="fa-solid fa-location-crosshairs"></i></button>
+                    <button class="search-button">Search</button>
+                </div>
+                <p id="error-message-weather"></p>
+            </form>
+            <div id="popular-cities">
+                <button class="city-btn">New York</button>
+                <button class="city-btn">London</button>
+                <button class="city-btn">San Diego</button>
+                <button class="city-btn">Tokyo</button>
+            </div>
+        </section>
+
+    <div class="weather-content">
+
+        <section id="weather-screen">
+            <form id="city-search-form-weather" class="city-search-form-weather">
+            <div class="search-container-weather">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="search-bar-weather" type="search" class="search-bar-weather" placeholder="Search city..." autocomplete="off"/>
+                <button id="location-btn-weather"><i class="fa-solid fa-location-crosshairs"></i></button>
+                <button class="search-button">Search</button>
+            </div>
+            <p id="error-message"></p>
+            </form>
+
             <p id="current-location">&#8599; Current Location</p> 
             <p id="city-name"></p>
             <p id="temp-number"></p>
@@ -44,6 +78,7 @@
         <section id="weekly-forecast">
             
         </section>
+    </div>
 
     </main>
 

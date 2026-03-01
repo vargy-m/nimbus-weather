@@ -5,7 +5,17 @@ let city = 'San Diego';
 
 /* DISPLAY FUNCTIONS */
 
+// This function shows our actual weather screen after the landing screen prompt has been filled
+function showWeatherScreen() {
+    document.getElementById('landing-page').style.display = 'none';
+    document.getElementById('weather-screen').style.display = 'flex';
+    document.getElementById('hourly-weather').style.display = 'flex';
+    document.getElementById('weekly-forecast').style.display = 'block'; // Re-address after we have styled the weekly forecast (in case we use flexbox)
+    document.querySelector('.main-container').style.overflowY = 'auto'; // This allows for scrolling once weather screen shows
+}
+
 function displayWeatherData(data) {
+    document.getElementById('current-location').style.display = 'none';
     document.getElementById('city-name').textContent = data.name;
     document.getElementById('temp-number').innerHTML = Math.round(data.main.temp) + '<span class="degree">º</span>';
     document.getElementById('weather-description').textContent = data.weather[0].description;
@@ -124,6 +134,8 @@ function getCurrentLocationWeather() {
                 displayWeatherData(data);
                 getCurrentLocationHourlyWeather(lat, lon);
                 getCurrentLocationWeeklyForecast(lat, lon);
+                showWeatherScreen();
+                document.getElementById('current-location').style.display = 'block';
             });
         },
         (error) => {
@@ -183,15 +195,29 @@ function getCurrentLocationWeeklyForecast(lat, lon) {
 
 /* EVENT LISTENERS */
 
-document.getElementById('city-search-form').addEventListener('submit', (event) => {
+document.getElementById('city-search-form-weather').addEventListener('submit', (event) => {
     event.preventDefault();
-    let searchCity = document.getElementById('search-bar').value;
+    let searchCity = document.getElementById('search-bar-weather').value;
     getWeather(searchCity);
+    showWeatherScreen();
     getHourlyForecast(searchCity);
     getWeeklyForecast(searchCity);
 })
 
+// Prior to this, we had a forEach eventListener function which went through every option
+// ...that was not as scalable as this option. One event listener waiting for every clickable
+// ...event that comes through our popular-cities div rather than multiple event listeners
+document.getElementById('popular-cities').addEventListener('click', (event) => {
+    if (event.target.classList.contains('city-btn')) {
+        let city = event.target.textContent;
+        getWeather(city);
+        showWeatherScreen();
+        getHourlyForecast(city);
+        getWeeklyForecast(city);
+    };
+});
+
 
 /* INITIAL FUNCTION CALLS */
 
-getCurrentLocationWeather();
+// getCurrentLocationWeather();
