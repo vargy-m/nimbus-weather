@@ -5,9 +5,11 @@ let city = 'San Diego';
 
 /* DISPLAY FUNCTIONS */
 
-// This function shows our actual weather screen after the landing screen prompt has been filled
+// This function shows our actual weather screen after the landing screen prompt has been submitted
 function showWeatherScreen() {
     document.getElementById('landing-page').style.display = 'none';
+    document.querySelector('.weather-content').style.display = 'flex';
+    document.getElementById('city-search-form-weather').style.display = 'flex';
     document.getElementById('weather-screen').style.display = 'flex';
     document.getElementById('hourly-weather').style.display = 'flex';
     document.getElementById('weekly-forecast').style.display = 'block'; // Re-address after we have styled the weekly forecast (in case we use flexbox)
@@ -23,15 +25,30 @@ function displayWeatherData(data) {
         let capitalized = description.charAt(0).toUpperCase() + description.slice(1);
         document.getElementById('weather-description').textContent = capitalized;
     document.getElementById('feels-like-value').textContent = Math.round(data.main.feels_like) + "º";
-    document.getElementById('high').textContent = Math.round(data.main.temp_max) + "º";
-    document.getElementById('low').textContent = Math.round(data.main.temp_min) + "º";
+    document.getElementById('high').innerHTML = Math.round(data.main.temp_max) + "º";
+    document.getElementById('low').innerHTML = Math.round(data.main.temp_min) + "º";
 };
+
+function displayHighLow(data) {
+    let today = new Date().toLocaleDateString('en-US');
+
+    let todayTemps = data.list
+    .filter(item => new Date(item.dt * 1000).toLocaleDateString('en-US' === today))
+    .map(item => item.main.temp);
+
+    let todayHigh = Math.round(Math.max(...todayTemps));
+    let todayLow = Math.round(Math.min(...todayTemps));
+
+    document.getElementById('high').innerHTML = todayHigh + "º";
+    document.getElementById('low').innerHTML = todayLow + "º";
+}
 
 function displayHourlyForecast(data) {
     document.getElementById('hourly-weather').innerHTML = ''; // Resets the information everytime a reload begins
     
     // Data loop to grab info from each item from 0-8 inside our data.list
-    data.list.slice(0, 8).forEach(item => { 
+    // Why 8? Because that's the specific data we need
+    data.list.slice(0, 16).forEach(item => { 
         let dateObject = new Date(item.dt * 1000); // Creates a date * 1000 to make it 
         let hour = dateObject.getHours();
         let ampm = hour >= 12 ? 'pm' : 'am';
@@ -115,11 +132,13 @@ function getWeather(city) {
     .then (response => response.json())
     .then (data => {
         if (data.cod === 200) {
-            document.getElementById('error-message').textContent = "";
+            document.getElementById('error-message-landing').textContent = "";
+            document.getElementById('error-message-weather').textContent = "";
             displayWeatherData(data);
+            showWeatherScreen();
         } else {
-            document.getElementById('error-message').textContent = "Error, invalid city, please enter a valid city name.";
-            
+            document.getElementById('error-message-landing').textContent = "Error, invalid city, please enter a valid city name.";
+            document.getElementById('error-message-weather').textContent = "Error, invalid city, please enter a valid city name.";
     }});
 }
 
@@ -155,15 +174,29 @@ function getCurrentLocationHourlyWeather(lat, lon) {
     });
 }
 
+function getCurrentLocationWeeklyForecast(lat, lon) {
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`)
+    .then (response => response.json())
+    .then (data => {
+        if (data.cod === "200") {
+            document.getElementById('error-message-landing').textContent = "";
+            displayWeeklyForecast(data);
+        } else {
+            document.getElementById('error-message-landing').textContent = "Error, invalid city, please enter a valid city name.";
+        }
+    });    
+}
+
 function getHourlyForecast(city) {
     fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`)
     .then (response => response.json())
     .then (data => {
         if (data.cod === "200") {
-            document.getElementById('error-message').textContent = "";
+            document.getElementById('error-message-landing').textContent = "";
             displayHourlyForecast(data);
+            displayHighLow(data); // Uses this data to populate inside of displayHighLow();
         } else {
-            document.getElementById('error-message').textContent = "Error, invalid city, please enter a valid city name.";
+            document.getElementById('error-message-landing').textContent = "Error, invalid city, please enter a valid city name.";
     }});
 }
 
@@ -172,51 +205,79 @@ function getWeeklyForecast(city) {
     .then (response => response.json())
     .then (data => {
         if (data.cod === "200") {
-            document.getElementById('error-message').textContent = "";
+            document.getElementById('error-message-landing').textContent = "";
             displayWeeklyForecast(data);
         } else {
-            document.getElementById('error-message').textContent = "Error, invalid city, please enter a valid city name.";
+            document.getElementById('error-message-landing').textContent = "Error, invalid city, please enter a valid city name.";
         }
     });    
 }
 
-function getCurrentLocationWeeklyForecast(lat, lon) {
-    fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`)
-    .then (response => response.json())
-    .then (data => {
-        if (data.cod === "200") {
-            document.getElementById('error-message').textContent = "";
-            displayWeeklyForecast(data);
-        } else {
-            document.getElementById('error-message').textContent = "Error, invalid city, please enter a valid city name.";
-        }
-    });    
-}
+
 
 /* EVENT LISTENERS */
+
+// Event Listener for landing page search bar
+document.getElementById('city-search-form-landing').addEventListener('submit', (event) => {
+    event.preventDefault();
+    let searchCity = document.getElementById('search-bar-landing').value;
+    getWeather(searchCity);
+    getHourlyForecast(searchCity);
+    getWeeklyForecast(searchCity);
+});
+
 
 document.getElementById('city-search-form-weather').addEventListener('submit', (event) => {
     event.preventDefault();
     let searchCity = document.getElementById('search-bar-weather').value;
     getWeather(searchCity);
-    showWeatherScreen();
     getHourlyForecast(searchCity);
     getWeeklyForecast(searchCity);
-})
+});
 
-// Prior to this, we had a forEach eventListener function which went through every option
-// ...that was not as scalable as this option. One event listener waiting for every clickable
-// ...event that comes through our popular-cities div rather than multiple event listeners
 document.getElementById('popular-cities').addEventListener('click', (event) => {
     if (event.target.classList.contains('city-btn')) {
         let city = event.target.textContent;
         getWeather(city);
-        showWeatherScreen();
         getHourlyForecast(city);
         getWeeklyForecast(city);
     };
 });
 
+/* DRAG TO SCROLL */
+
+const hourlyWeather = document.getElementById('hourly-weather');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+// Mouse down
+hourlyWeather.addEventListener('mousedown', (e) => {
+    isDown = true;
+    hourlyWeather.classList.add('active');
+    startX = e.pageX - hourlyWeather.offsetLeft;
+    scrollLeft = hourlyWeather.scrollLeft;
+});
+
+// Mouse has left the hourlyweather div
+hourlyWeather.addEventListener('mouseleave', () => {
+    isDown = false;
+    hourlyWeather.classList.remove('active');
+});
+
+// Mouse no longer pressed down
+hourlyWeather.addEventListener('mouseup', () => {
+    isDown = false;
+    hourlyWeather.classList.remove('active');
+});
+
+hourlyWeather.addEventListener('mousemove', (e) => {
+    if (!isDown) return; // if no mouse is down, nothing happens
+    e.preventDefault();
+    let x = e.pageX - hourlyWeather.offsetLeft;
+    let walk = (x - startX) * 1.5;
+    hourlyWeather.scrollLeft = scrollLeft - walk;
+});
 
 /* INITIAL FUNCTION CALLS */
 

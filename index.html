@@ -20,7 +20,6 @@
 
 <header><h1>Nimbus <em>Weather</em></h1></header>
 
-
     <main class="main-container">
         <section id="landing-page">
             <div id="landing-page-text">
@@ -34,7 +33,7 @@
                     <button id="location-btn-landing"><i class="fa-solid fa-location-crosshairs"></i></button>
                     <button class="search-button">Search</button>
                 </div>
-                <p id="error-message-weather"></p>
+                <p id="error-message-landing"></p>
             </form>
             <div id="popular-cities">
                 <button class="city-btn">New York</button>
@@ -46,16 +45,17 @@
 
     <div class="weather-content">
 
-        <section id="weather-screen">
-            <form id="city-search-form-weather" class="city-search-form-weather">
+        <form id="city-search-form-weather" class="city-search-form-weather">
             <div class="search-container-weather">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input id="search-bar-weather" type="search" class="search-bar-weather" placeholder="Search city..." autocomplete="off"/>
                 <button id="location-btn-weather"><i class="fa-solid fa-location-crosshairs"></i></button>
                 <button class="search-button">Search</button>
             </div>
-            <p id="error-message"></p>
+            <p id="error-message-weather"></p>
             </form>
+            
+        <section id="weather-screen">
 
             <p id="current-location">&#8599; Current Location</p> 
             <p id="city-name"></p>
